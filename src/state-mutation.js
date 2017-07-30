@@ -120,6 +120,13 @@ export const updateOrInsertResource = (state, resource) => {
     const resources = state[resource.type].data;
     const idx = resources.findIndex(item => item.id === resource.id);
 
+    // Replace empty relationships with old state
+    Object.keys(resource.relationships).forEach(relKey => {
+      if (Object.keys(resource.relationships[relKey]).length === 0) {
+        resource.relationships[relKey] = resources[idx].relationships[relKey]
+      }
+    });
+
     if (!equal(resources[idx], resource)) {
       newState = imm.set(newState, updatePath.concat(idx), resource);
     }
